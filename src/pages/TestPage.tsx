@@ -2,10 +2,28 @@ import React from "react";
 import { Button } from "src/components/shadcn/ui/button";
 import { useAlertStore } from "src/stores/useAlertStore";
 import { useConfirmStore } from "src/stores/useConfirmStore";
+import { useTranslation, Trans } from "react-i18next";
+
+type Language = {
+  nativeName: string;
+};
+
+type Languages = {
+  [key: string]: Language;
+};
+
+const lngs: Languages = {
+  // 2. 언어 구분을 위한 lng 객체 생성
+  en: { nativeName: "English" },
+  de: { nativeName: "Deutsch" },
+  ko: { nativeName: "Korean" },
+};
 
 export default function Test() {
   const { showAlert, showAlertSync } = useAlertStore();
   const { showConfirm, showConfirmSync } = useConfirmStore();
+
+  const { t, i18n } = useTranslation(); // 3. useTranslation hook 선언
 
   return (
     <div>
@@ -64,6 +82,29 @@ export default function Test() {
           </Button>
         </li>
       </ul>
+
+      <div>
+        다국어 테스트
+        <div>
+          {Object.keys(lngs).map((lng) => (
+            <Button
+              style={{
+                fontWeight: i18n.resolvedLanguage === lng ? "bold" : "normal",
+              }}
+              onClick={() => i18n.changeLanguage(lng)}
+            >
+              {lngs[lng].nativeName}
+            </Button>
+          ))}
+          <p>
+            <Trans i18nKey="description.part1">
+              <code>src/App.js</code> and save to reload.
+            </Trans>
+          </p>
+          <p>{t("description.part2")}</p>
+          <p>{t("counter_one")}</p>
+        </div>
+      </div>
     </div>
   );
 }
